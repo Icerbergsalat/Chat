@@ -1,4 +1,4 @@
-package org.example.Client;
+package org.example.Client.models;
 
 public class User {
 

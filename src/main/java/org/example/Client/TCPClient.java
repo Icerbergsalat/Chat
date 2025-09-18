@@ -1,5 +1,7 @@
 package org.example.Client;
 
+import org.example.Client.models.User;
+
 import java.io.*;
 import java.net.Socket;
 import java.time.format.DateTimeFormatter;

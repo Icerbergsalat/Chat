@@ -5,7 +5,7 @@ import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.sql.*;
-import org.example.models.DBConnector;
+import org.example.Server.application.DBConnector;
 
 public class TCPServer implements Runnable {
     public static TCPServer tcpServer;
