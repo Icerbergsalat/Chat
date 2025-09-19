@@ -2,15 +2,19 @@ package org.example.Server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.sql.*;
+
+import org.example.Client.models.User;
 import org.example.Server.application.DBConnector;
 
 public class TCPServer implements Runnable {
     public static TCPServer tcpServer;
     private final ServerSocket serverSocket;
     private final ExecutorService pool;
+    static HashMap<String, String> knownIps = new HashMap<>();
 
     public TCPServer(int port, int pool) throws IOException {
         this.serverSocket = new ServerSocket(port);
@@ -36,6 +40,7 @@ public class TCPServer implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
         DBConnector db = new DBConnector();
         Connection connection = db.getConnection();
 
