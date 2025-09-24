@@ -35,6 +35,16 @@ public class UserRepository {
             System.out.println(id + " " + username);
         }
     }
+    public void findByUsername(String username) throws SQLException {
+        String sql = "select * from user where username = ?";
+        var conn = DriverManager.getConnection(url);
+        var stmt = conn.prepareStatement(sql);
+        stmt.setString(1, username);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt("ID");
+        }
+    }
     public void update(User user) throws SQLException {
         String sql = "update user set username = ? where ID = ?";
         var conn = DriverManager.getConnection(url);
