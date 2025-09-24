@@ -10,9 +10,13 @@ import java.sql.SQLException;
 public class UserRepository {
     private DBConnector dbConnector;
     String url = "jdbc:sqlite:chatdb.db";
+    private static UserRepository instance;
 
-    public UserRepository(DBConnector dbConnector) {
-        this.dbConnector = dbConnector;
+    public static UserRepository getInstance(){
+        if (instance == null){
+            instance = new UserRepository();
+        }
+        return instance;
     }
     public void save(User user) throws SQLException {
         String sql = "insert into user (ID, username) values (?,?)";
@@ -24,7 +28,7 @@ public class UserRepository {
             stmt.executeUpdate();
     }
     public void findAll() throws SQLException {
-        String sql = "select * from user";
+        String sql = "select * from User";
         var conn = DriverManager.getConnection(url);
         var stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
@@ -35,18 +39,22 @@ public class UserRepository {
             System.out.println(id + " " + username);
         }
     }
-    public void findByUsername(String username) throws SQLException {
-        String sql = "select * from user where username = ?";
+    public User getUser(String username) throws SQLException {
+        String sql = "select * from User where username = ?";
         var conn = DriverManager.getConnection(url);
         var stmt = conn.prepareStatement(sql);
         stmt.setString(1, username);
         ResultSet rs = stmt.executeQuery();
+        int id = 0;
+        username = "";
         while (rs.next()) {
-            int id = rs.getInt("ID");
+            id = rs.getInt("ID");
+            username = rs.getString("username");
         }
+        return new User (id, username);
     }
     public void update(User user) throws SQLException {
-        String sql = "update user set username = ? where ID = ?";
+        String sql = "update User set username = ? where ID = ?";
         var conn = DriverManager.getConnection(url);
         var stmt = conn.prepareStatement(sql);
         stmt.setString(1, user.getUsername());
@@ -54,7 +62,7 @@ public class UserRepository {
         stmt.executeUpdate();
     }
     public void delete(int id) throws SQLException {
-        String sql = "delete from user where ID = ?";
+        String sql = "delete from User where ID = ?";
         var conn = DriverManager.getConnection(url);
         var stmt = conn.prepareStatement(sql);
         stmt.setInt(1, id);

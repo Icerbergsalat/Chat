@@ -7,10 +7,13 @@ import java.net.Socket;
 
 public class ThreadIn implements Runnable {
     private Socket socket;
+    private BufferedReader bufferedReader;
+    public static boolean loggedin = false;
     org.example.Client.MessageParser messageParser = new org.example.Client.MessageParser();
 
-    public ThreadIn(Socket socket) {
+    public ThreadIn(Socket socket, BufferedReader bufferedReader) {
         this.socket = socket;
+        this.bufferedReader = bufferedReader;
     }
     @Override
     public void run() {
@@ -18,12 +21,13 @@ public class ThreadIn implements Runnable {
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             while(true) {
-                String[] fuck = messageParser.unparseMessage(br.readLine());
-                for (String s : fuck){
+                String[] result = messageParser.unparseMessage(br.readLine());
+                for (String s : result){
                     System.out.println(s);
                 }
             }
         } catch (IOException e) {
+            System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
     }
