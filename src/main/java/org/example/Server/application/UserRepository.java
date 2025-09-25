@@ -28,7 +28,7 @@ public class UserRepository {
             stmt.executeUpdate();
     }
     public void findAll() throws SQLException {
-        String sql = "select * from User";
+        String sql = "select * from user";
         var conn = DriverManager.getConnection(url);
         var stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
@@ -40,7 +40,7 @@ public class UserRepository {
         }
     }
     public User getUser(String username) throws SQLException {
-        String sql = "select * from User where username = ?";
+        String sql = "select * from user where username = ?";
         var conn = DriverManager.getConnection(url);
         var stmt = conn.prepareStatement(sql);
         stmt.setString(1, username);
@@ -54,7 +54,7 @@ public class UserRepository {
         return new User (id, username);
     }
     public void update(User user) throws SQLException {
-        String sql = "update User set username = ? where ID = ?";
+        String sql = "update user set username = ? where ID = ?";
         var conn = DriverManager.getConnection(url);
         var stmt = conn.prepareStatement(sql);
         stmt.setString(1, user.getUsername());
@@ -62,7 +62,7 @@ public class UserRepository {
         stmt.executeUpdate();
     }
     public void delete(int id) throws SQLException {
-        String sql = "delete from User where ID = ?";
+        String sql = "delete from user where ID = ?";
         var conn = DriverManager.getConnection(url);
         var stmt = conn.prepareStatement(sql);
         stmt.setInt(1, id);

@@ -22,9 +22,10 @@ public class ThreadIn implements Runnable {
 
             while(true) {
                 String[] result = messageParser.unparseMessage(br.readLine());
-                for (String s : result){
-                    System.out.println(s);
-                }
+                    System.out.println(result[0] + " | " + result[1] + "\n" + result[3]);
+
+                    //name | tid
+                    //-> text
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());

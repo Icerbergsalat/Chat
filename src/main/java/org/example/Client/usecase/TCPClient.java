@@ -35,12 +35,14 @@ public class TCPClient{
                 if (login.equals("logged in succesfully"))
                     ThreadIn.loggedin = true;
             }
+            String username = br.readLine();
 
             Thread thread = new Thread(new ThreadIn(socket, br));
             thread.start();
 
             while(true){
-                String message = messageParser.messageBuilder("message", "harry", scan.nextLine());
+                System.out.print(username + ": ");
+                String message = messageParser.messageBuilder("message", username, scan.nextLine());
                 print.println(message);
             }
         } catch (IOException e){

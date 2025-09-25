@@ -38,9 +38,10 @@ public class TCPThread implements Runnable{
             while (!loggedIn) {
                 String username = in.readLine();
                 String[] result = MessageParser.getInstance().unparseMessage(username);
-                if (UserRepository.getInstance().getUser(result[0]).getUsername().equals(result[0])){
+                if (/*UserRepository.getInstance().getUser(result[0]).getUsername().equals(result[0])*/true){
                     loggedIn = true;
                     out.println("logged in succesfully");
+                    out.println(result[0]);
                 } else {
                     out.println("wrong username");
                     out.println("try again");
@@ -48,15 +49,16 @@ public class TCPThread implements Runnable{
             }
             while (true) {
                 String communication = in.readLine();
+                System.out.println(communication);
                 TCPServer.broadcast(communication, this);
             }
 
         } catch (IOException e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
-        } catch (SQLException e) {
+        } /*catch (SQLException e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
     public void sendMessage(String message){
         out.println(message);
