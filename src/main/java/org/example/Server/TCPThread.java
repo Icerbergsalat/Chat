@@ -53,8 +53,14 @@ public class TCPThread implements Runnable{
                     String[] msg = msgParser.unparseMessage(communication);
                     System.out.println(msg[3]);
                     byte[] fileDataArray = socket.getInputStream().readNBytes(Integer.parseInt(msg[3]));
+                    System.out.println("penis 2");
                     socket.getOutputStream().write(fileDataArray);
-                    TCPServer.unicast(fileDataArray, msg[4]);
+//                    TCPServer.unicast(fileDataArray, msg[4]);
+                    System.out.println("penis");
+                    try (FileOutputStream fos = new FileOutputStream("vector.png")){
+                        fos.write(fileDataArray);
+                    }
+                    System.out.println("file saved");
                     continue;
                 }
                 TCPServer.broadcast(communication, this);

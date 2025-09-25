@@ -51,6 +51,7 @@ public class TCPClient{
                         byte[] data = fis.readAllBytes();
                         print.println(messageParser.messageBuilder("file", username,data.length + ":" + command[2]));
                         socket.getOutputStream().write(data);
+                        socket.getOutputStream().flush();
                     }
                     continue;
                 }
