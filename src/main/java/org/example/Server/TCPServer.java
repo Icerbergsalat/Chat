@@ -76,6 +76,7 @@ public class TCPServer implements Runnable {
         if (thread == null) {
             return false;
         }
+        System.out.println(thread.user);
         thread.sendMessage(message);
         return true;
     }

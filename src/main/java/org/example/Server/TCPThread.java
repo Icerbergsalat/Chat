@@ -90,8 +90,9 @@ public class TCPThread implements Runnable{
                     String[] msg = msgParser.unparseMessage(communication);
                     System.out.println(msg[3]);
                     System.out.println(msg[4]);
-                    msgParser.messageBuilder(msg[0], msg[1], msg[3]);
-                    TCPServer.unicast(msg[3], msg[4]);
+                    String messageington = msgParser.messageBuilder("message", msg[0], msg[3]);
+                    TCPServer.unicast(messageington, msg[4]);
+                    continue;
                 }
                 TCPServer.broadcast(communication, this);
             }

@@ -23,9 +23,6 @@ public class ThreadIn implements Runnable {
             while(true) {
                 String[] result = messageParser.unparseMessage(br.readLine());
                     System.out.println(result[0] + " | " + result[1] + "\n" + result[3]);
-
-                    //name | tid
-                    //-> text
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
