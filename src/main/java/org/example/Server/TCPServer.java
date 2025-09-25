@@ -15,8 +15,7 @@ public class TCPServer implements Runnable {
     public static TCPServer tcpServer;
     private final ServerSocket serverSocket;
     private final ExecutorService pool;
-    static HashMap<String, String> knownIps = new HashMap<>();
-    private static ArrayList<TCPThread> users = new ArrayList<>();
+    static ArrayList<TCPThread> users = new ArrayList<>();
 
     public TCPServer(int port, int pool) throws IOException {
         this.serverSocket = new ServerSocket(port);
@@ -57,11 +56,41 @@ public class TCPServer implements Runnable {
             }
         }
     }
-    public static void broadcast(String message, TCPThread sender) {
+    public static boolean broadcast(String message, TCPThread sender) {
         for (TCPThread user : users) {
             if (user != sender) {
                 user.sendMessage(message);
+                return true;
             }
         }
+        return false;
+    }
+    public static boolean unicast(String message, String reciever) {
+        TCPThread thread = null;
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).user.equalsIgnoreCase(reciever)){
+                thread = users.get(i);
+                break;
+            }
+        }
+        if (thread == null) {
+            return false;
+        }
+        thread.sendMessage(message);
+        return true;
+    }
+    public static boolean unicast(byte[] file, String reciever) throws IOException {
+        TCPThread thread = null;
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).user.equalsIgnoreCase(reciever)){
+                thread = users.get(i);
+                break;
+            }
+        }
+        if (thread == null) {
+            return false;
+        }
+        thread.sendMessage(file);
+        return true;
     }
 }

@@ -18,7 +18,6 @@ public class TCPClient{
         LocalDateTime date = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM HH:mm");
         String formattedDate = date.format(formatter);
-        String type = "login";
         MessageParser messageParser = new MessageParser();
 
 
@@ -28,7 +27,7 @@ public class TCPClient{
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while (!ThreadIn.loggedin) {
                 System.out.println(br.readLine());
-                String builder = new MessageParser().messageBuilder(type, scan.nextLine(), null);
+                String builder = new MessageParser().messageBuilder("login", scan.nextLine(), null);
                 print.println(builder);
                 String login = br.readLine();
                 System.out.println(login);
@@ -41,12 +40,35 @@ public class TCPClient{
             thread.start();
 
             while(true){
-                System.out.print(username + ": ");
-                String message = messageParser.messageBuilder("message", username, scan.nextLine());
+                String msg = scan.nextLine();
+                if (msg.contains("/help")) {
+                    continue;
+                }
+                if (msg.contains("/file")) {
+                    String[] command = msg.split(" ");
+                    //syntax skal være /file "sti" "modtager"
+                    try (FileInputStream fis = new FileInputStream(command[1])) {
+                        byte[] data = fis.readAllBytes();
+                        print.println(messageParser.messageBuilder("file", username,data.length + ":" + command[2]));
+                        socket.getOutputStream().write(data);
+                    }
+                    continue;
+                }
+
+                if (msg.contains("/whisper")){
+                    messageParser.messageBuilder("message", "bob", "amogus" + ":" + "bob2");
+                }
+                String message = messageParser.messageBuilder("message", username, msg);
+                String[] result = messageParser.unparseMessage(message);
+                System.out.println(result[0] + " | " + result[1] + "\n" + result[3]);
                 print.println(message);
             }
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+    public static void fileSender(String path, String target) {
+        // src/main/java/org/example/Client/MessageParser.java
+        FileInputStream fis = null;
     }
 }

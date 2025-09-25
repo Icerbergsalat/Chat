@@ -3,10 +3,7 @@ package org.example.Server;
 import org.example.Client.MessageParser;
 import org.example.Server.application.UserRepository;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.sql.SQLException;
 
@@ -15,6 +12,7 @@ public class TCPThread implements Runnable{
     private org.example.Server.TCPServer server;
     private BufferedReader in;
     private PrintWriter out;
+    public String user;
 
     public TCPThread(Socket socket, org.example.Server.TCPServer server) {
         this.socket = socket;
@@ -32,7 +30,6 @@ public class TCPThread implements Runnable{
         boolean loggedIn = false;
         System.out.println("New client connected");
         String message = "Hvad er dit username?";
-        TCPServer.knownIps.put("username", socket.getInetAddress() + "");
         try {
             out.println(message);
             while (!loggedIn) {
@@ -42,6 +39,7 @@ public class TCPThread implements Runnable{
                     loggedIn = true;
                     out.println("logged in succesfully");
                     out.println(result[0]);
+                    user = result[0];
                 } else {
                     out.println("wrong username");
                     out.println("try again");
@@ -50,6 +48,15 @@ public class TCPThread implements Runnable{
             while (true) {
                 String communication = in.readLine();
                 System.out.println(communication);
+                if (communication.contains("file")) {
+                    MessageParser msgParser = new MessageParser();
+                    String[] msg = msgParser.unparseMessage(communication);
+                    System.out.println(msg[3]);
+                    byte[] fileDataArray = socket.getInputStream().readNBytes(Integer.parseInt(msg[3]));
+                    socket.getOutputStream().write(fileDataArray);
+                    TCPServer.unicast(fileDataArray, msg[4]);
+                    continue;
+                }
                 TCPServer.broadcast(communication, this);
             }
 
@@ -62,5 +69,8 @@ public class TCPThread implements Runnable{
     }
     public void sendMessage(String message){
         out.println(message);
+    }
+    public void sendMessage(byte[] message) throws IOException {
+        socket.getOutputStream().write(message);
     }
 }
