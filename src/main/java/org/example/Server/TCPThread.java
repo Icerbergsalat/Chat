@@ -9,15 +9,24 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 public class TCPThread implements Runnable{
     private Socket socket;
     private org.example.Server.TCPServer server;
+    private BufferedReader in;
+    private PrintWriter out;
+
     public TCPThread(Socket socket, org.example.Server.TCPServer server) {
         this.socket = socket;
         this.server = server;
+        try {
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
+
     @Override
     public void run(){
         boolean loggedIn = false;
@@ -25,8 +34,6 @@ public class TCPThread implements Runnable{
         String message = "Hvad er dit username?";
         TCPServer.knownIps.put("username", socket.getInetAddress() + "");
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             out.println(message);
             while (!loggedIn) {
                 String username = in.readLine();
@@ -41,8 +48,7 @@ public class TCPThread implements Runnable{
             }
             while (true) {
                 String communication = in.readLine();
-//                System.out.println(communication);
-                out.println(communication);
+                TCPServer.broadcast(communication, this);
             }
 
         } catch (IOException e) {
@@ -51,5 +57,8 @@ public class TCPThread implements Runnable{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    public void sendMessage(String message){
+        out.println(message);
     }
 }
