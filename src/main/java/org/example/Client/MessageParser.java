@@ -12,6 +12,7 @@ public class MessageParser {
         }
         return instance;
     }
+
     public String[] unparseMessage(String message) {
         return message.split("#");
     }
@@ -28,6 +29,9 @@ public class MessageParser {
             case "file":
                 String[] result = payload.split(":");
                 return user + "#" + formattedDate + "#" + type + "#" + result[0] + "#" + result[1];
+            case "whisper":
+                String[] msg = payload.split(":");
+                return user + "#" + formattedDate + "#" + type + "#" + msg[0] + "#" + msg[1];
             default:
                 break;
         }

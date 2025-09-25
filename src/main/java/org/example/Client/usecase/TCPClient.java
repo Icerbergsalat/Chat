@@ -44,20 +44,24 @@ public class TCPClient{
                 if (msg.contains("/help")) {
                     continue;
                 }
+
                 if (msg.contains("/file")) {
                     String[] command = msg.split(" ");
                     //syntax skal være /file "sti" "modtager"
                     try (FileInputStream fis = new FileInputStream(command[1])) {
                         byte[] data = fis.readAllBytes();
                         print.println(messageParser.messageBuilder("file", username,data.length + ":" + command[2]));
-                        socket.getOutputStream().write(data);
-                        socket.getOutputStream().flush();
+                        BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+                        bos.write(data);
+                        bos.flush();
                     }
                     continue;
                 }
 
                 if (msg.contains("/whisper")){
-                    messageParser.messageBuilder("message", "bob", "amogus" + ":" + "bob2");
+                    //syntax skal være /whisper *besked:modtager*
+                    print.println(messageParser.messageBuilder("whisper", username, msg.replace("/whisper ", "")));
+                    continue;
                 }
                 String message = messageParser.messageBuilder("message", username, msg);
                 String[] result = messageParser.unparseMessage(message);

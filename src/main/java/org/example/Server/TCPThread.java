@@ -31,6 +31,7 @@ public class TCPThread implements Runnable{
         System.out.println("New client connected");
         String message = "Hvad er dit username?";
         try {
+//            socket.setSoTimeout(10000);
             out.println(message);
             while (!loggedIn) {
                 String username = in.readLine();
@@ -48,20 +49,49 @@ public class TCPThread implements Runnable{
             while (true) {
                 String communication = in.readLine();
                 System.out.println(communication);
+
                 if (communication.contains("file")) {
                     MessageParser msgParser = new MessageParser();
                     String[] msg = msgParser.unparseMessage(communication);
-                    System.out.println(msg[3]);
-                    byte[] fileDataArray = socket.getInputStream().readNBytes(Integer.parseInt(msg[3]));
+
+
+                    int fileSize = Integer.parseInt(msg[3]);
+                    System.out.println("file size: " + fileSize);
+                    byte[] fileDataArray = new byte[fileSize];
+                    BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+
+                    int bytesRead;
+                    int totalRead = 0;
+
+                    while (totalRead < fileSize && (bytesRead = bis.read(fileDataArray, totalRead, fileSize - totalRead)) != -1) {
+                        totalRead += bytesRead;
+                        System.out.println("total: " + totalRead + " bytes read: " + bytesRead);
+                    }
+
+                    if (totalRead != fileSize) {
+                        System.out.println("file size mismatch");
+                    } else {
+                        System.out.println("file read successfully");
+                    }
+
                     System.out.println("penis 2");
                     socket.getOutputStream().write(fileDataArray);
-//                    TCPServer.unicast(fileDataArray, msg[4]);
+                    TCPServer.unicast(fileDataArray, msg[4]);
                     System.out.println("penis");
                     try (FileOutputStream fos = new FileOutputStream("vector.png")){
                         fos.write(fileDataArray);
                     }
                     System.out.println("file saved");
                     continue;
+                }
+                if (communication.contains("whisper")) {
+                    MessageParser msgParser = new MessageParser();
+                    System.out.println(communication);
+                    String[] msg = msgParser.unparseMessage(communication);
+                    System.out.println(msg[3]);
+                    System.out.println(msg[4]);
+                    msgParser.messageBuilder(msg[0], msg[1], msg[3]);
+                    TCPServer.unicast(msg[3], msg[4]);
                 }
                 TCPServer.broadcast(communication, this);
             }

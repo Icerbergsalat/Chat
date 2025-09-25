@@ -84,6 +84,7 @@ public class TCPServer implements Runnable {
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).user.equalsIgnoreCase(reciever)){
                 thread = users.get(i);
+                System.out.println("thread found");
                 break;
             }
         }
